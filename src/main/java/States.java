@@ -5,6 +5,8 @@ public class States extends ArrayList<State>{
 	
 	private int size;
 	private int nbAnswer;
+	public State highestState;
+	public int highestEstBallot;
 	
 	public States(int size) {
 		super(size);
@@ -13,8 +15,15 @@ public class States extends ArrayList<State>{
 	}
 	
 	public void set(int index, Integer est, int estballot ) {
-		set(index,new State(est,estballot));
+		State insertedState = new State(est,estballot);
+		
+		set(index, insertedState);
 		nbAnswer++;
+		
+		if (estballot > highestEstBallot) {
+			this.highestState = insertedState;
+			this.highestEstBallot = estballot;
+		}
 	}
 	
 	
@@ -29,5 +38,7 @@ public class States extends ArrayList<State>{
 		}
 		
 		this.nbAnswer = 0;
+		this.highestEstBallot = -1;
+		this.highestState = null;
 	}
 }

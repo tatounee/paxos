@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 public class Main {
 
     public static int N = 10;
+    
+    public static double alpha = 0.7;
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -19,7 +21,7 @@ public class Main {
 
         for (int i = 0; i < N; i++) {
             // Instantiate processes
-            final ActorRef a = system.actorOf(Process.createActor(i + 1, N), "" + i);
+            final ActorRef a = system.actorOf(Process.createActor(i + 1, N,alpha), "" + i);
             references.add(a);
         }
 
