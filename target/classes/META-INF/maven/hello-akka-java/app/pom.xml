@@ -53,18 +53,15 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>-classpath</argument>
-                        <classpath />
-                        <argument>main</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
+			    <groupId>org.codehaus.mojo</groupId>
+			    <artifactId>exec-maven-plugin</artifactId>
+			    <version>3.0.0</version>
+			    <configuration>
+			        <mainClass>paxos.Main</mainClass>  <!-- Indique la classe principale -->
+			        <classpathScope>runtime</classpathScope>
+			    </configuration>
+			</plugin>
+
         </plugins>
     </build>
 </project>

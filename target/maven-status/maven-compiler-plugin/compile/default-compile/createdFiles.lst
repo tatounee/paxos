@@ -1,0 +1,14 @@
+paxos\State.class
+paxos\Process.class
+paxos\AbortMsg.class
+paxos\CrashMsg.class
+paxos\DecideMsg.class
+paxos\GatherMsg.class
+paxos\ImposeMsg.class
+paxos\OfconsProposerMsg.class
+paxos\HoldingMsg.class
+paxos\Members.class
+paxos\ReadMsg.class
+paxos\Main.class
+paxos\AckMsg.class
+paxos\States.class
