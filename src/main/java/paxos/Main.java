@@ -59,7 +59,7 @@ public class Main {
         //electing a non faulty leader
         int leaderIndex = new Random().nextInt(f, N); 
         
-        //waiting timeout before holding all the processus
+        //waiting timeout before holding all the processes
         system.scheduler().scheduleOnce(
         		Duration.create(timeout, TimeUnit.MILLISECONDS),
         		() -> electLeader(references,system,leaderIndex),

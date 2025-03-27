@@ -64,6 +64,15 @@ public class Process extends UntypedAbstractActor {
         });
     }
     
+    private void sendMessage(ActorRef pj,Object message) {
+	    if (mightCrash && new Random().nextDouble() < alpha && !silentMode) {
+	        this.silentMode = true;
+	        log.warning("[CRASH] p" + self().path().name() + " has entered silent mode due to crash probability.");
+	    }
+	    else if (!silentMode){
+	    	pj.tell(message, getSelf());
+	    }
+    }
     
     private void ofconsProposeReceived(Integer v) {
     	if (!isHolding) {
@@ -75,7 +84,7 @@ public class Process extends UntypedAbstractActor {
 	        log.debug("[" + startingTime + "] [START] p" + self().path().name() + " propose with ballot :" + ballot + " and value: " + v);
 	        
 	        for (ActorRef actor : processes.references) {
-	            actor.tell(new ReadMsg(ballot), this.getSelf());
+	        	sendMessage(actor,new ReadMsg(ballot));
 	            log.debug(System.currentTimeMillis() + " :[SENDING] Read (ballot = " + ballot + ") msg: p" + self().path().name() + " -> p" + actor.path().name());
 	        }
     	}
@@ -83,13 +92,13 @@ public class Process extends UntypedAbstractActor {
     
     private void readReceived(int newBallot, ActorRef pj) {
             if ((readballot > newBallot) || (imposeballot > newBallot)) {
-            	pj.tell(new AbortMsg(newBallot), getSelf());
+            	sendMessage(pj,new AbortMsg(newBallot));
             	log.debug(System.currentTimeMillis() +"[SENDING] Abort (ballot = " + newBallot + ") msg: p" + self().path().name() + " -> p" + pj.path().name());
             }
             else {
             	readballot = newBallot;
             	
-            	pj.tell(new GatherMsg(newBallot,imposeballot,estimate,id), getSelf());
+            	sendMessage(pj,new GatherMsg(newBallot,imposeballot,estimate,id));
             	log.debug(System.currentTimeMillis() +
             		"[SENDING] Gather (ballot = " + newBallot + 
             						", imposeballot = " + imposeballot + 
@@ -116,7 +125,7 @@ public class Process extends UntypedAbstractActor {
     			}
     			
     	        for (ActorRef actor : processes.references) {
-    	            actor.tell(new ImposeMsg(ballot,proposal), this.getSelf());
+    	            sendMessage(actor,new ImposeMsg(ballot,proposal));
     	            log.debug(System.currentTimeMillis() + 
     	            	":[SENDING] Impose (ballot = " + ballot + ", proposal = " + proposal + ") msg: p" + self().path().name() + " -> p" + actor.path().name()
     	            );
@@ -127,13 +136,13 @@ public class Process extends UntypedAbstractActor {
     
     private void imposeReceived(int newBallot,int v, ActorRef pj) {
     	if (readballot> newBallot || imposeballot > ballot) {
-    		pj.tell(new AbortMsg(newBallot), getSelf());
+    		sendMessage(pj,new AbortMsg(newBallot));
     		log.debug(System.currentTimeMillis() +"[SENDING] Abort (ballot = " + newBallot + ") msg: p" + self().path().name() + " -> p" + pj.path().name());
     	}
     	else {
     		estimate = v;
     		imposeballot = newBallot;
-    		pj.tell(new AckMsg(newBallot), getSelf());
+    		sendMessage(pj,new AckMsg(newBallot));
     		log.debug(System.currentTimeMillis() +"[SENDING] Ack (ballot = " + newBallot + ") msg: p" + self().path().name() + " -> p" + pj.path().name());
     	}
     }
@@ -142,7 +151,7 @@ public class Process extends UntypedAbstractActor {
     	nbAck++;
     	if (nbAck > N/2 && nbAck-1 <= N/2) { //if the majority was reached for the first time
     		for (ActorRef actor : processes.references) {
-	            actor.tell(new DecideMsg(proposal), this.getSelf());
+    			sendMessage(actor,new DecideMsg(proposal));
 	            log.debug(System.currentTimeMillis() +"[SENDING] Decide (v = " + proposal + ") msg: p" + self().path().name() + " -> p" + actor.path().name());
 	        }
     	}
@@ -150,7 +159,7 @@ public class Process extends UntypedAbstractActor {
     
     private void decideReceived(int v) {
 		for (ActorRef actor : processes.references) {
-            actor.tell(new DecideMsg(proposal), this.getSelf());
+			sendMessage(actor,new DecideMsg(proposal));
             log.debug(System.currentTimeMillis() +"[SENDING] Decide (v = " + proposal + ") msg: p" + self().path().name() + " -> p" + actor.path().name());
         }
 		decidedValue = v;
@@ -160,10 +169,6 @@ public class Process extends UntypedAbstractActor {
     
 	public void onReceive(Object message) throws Throwable {
 	    long timestamp = System.currentTimeMillis();
-	    if (mightCrash && new Random().nextDouble() < alpha && !silentMode) {
-	        this.silentMode = true;
-	        log.warning("[" + timestamp + "] [CRASH] p" + self().path().name() + " has entered silent mode due to crash probability.");
-	    }
 	    if (decidedValue == null && !silentMode) {
 	        if (message instanceof Members) {
 	            Members m = (Members) message;
