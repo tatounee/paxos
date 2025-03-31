@@ -6,7 +6,7 @@
     <version>1.0</version>
 
     <properties>
-      <akka.version>2.10.2</akka.version>
+        <akka.version>2.10.2</akka.version>
     </properties>
 
     <repositories>
@@ -52,15 +52,21 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-            <plugin>
-			    <groupId>org.codehaus.mojo</groupId>
-			    <artifactId>exec-maven-plugin</artifactId>
-			    <version>3.0.0</version>
-			    <configuration>
-			        <mainClass>paxos.Main</mainClass>  <!-- Indique la classe principale -->
-			        <classpathScope>runtime</classpathScope>
-			    </configuration>
-			</plugin>
+            <!-- <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-cp</argument>
+                        <classpath />
+                        <argument>paxos.Main</argument>
+                    </arguments>
+                    <mainClass>paxos.Main</mainClass>
+                    <classpathScope>runtime</classpathScope>
+                </configuration>
+            </plugin> -->
 
         </plugins>
     </build>
