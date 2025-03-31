@@ -15,7 +15,7 @@ public class Main {
     
     public static double alpha = 0.1;
     
-    public static int timeout = 2000; // in ms
+    public static int timeout = 1000; // in ms
 
 
     public static void main(String[] args) throws InterruptedException {
